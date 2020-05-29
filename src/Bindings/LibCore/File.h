@@ -26,18 +26,52 @@
 
 #pragma once
 
-#define JS_BINDINGS_ENUMERATE_NATIVE_OBJECTS \
-    __JS_BINDINGS_ENUMERATE(LibCore, Core, core, File, file, FilePrototype, FileConstructor)
+#include "../Macros.h"
+
+#include <LibCore/File.h>
+#include <LibJS/Runtime/NativeFunction.h>
 
 namespace Bindings {
+namespace LibCore {
 
-#define __JS_BINDINGS_ENUMERATE(Namespace, ObjectName, object_name, ClassName, class_name, PrototypeName, ConstructorName) \
-    namespace Namespace {                                                                                                  \
-    class ClassName;                                                                                                       \
-    class ConstructorName;                                                                                                 \
-    class PrototypeName;                                                                                                   \
-    }
-JS_BINDINGS_ENUMERATE_NATIVE_OBJECTS
-#undef __JS_BINDINGS_ENUMERATE
+OBJECT(File)
+{
+    __OBJECT_WITH_ARGS(File, const StringView& filename)
 
+    MEMBER(NonnullRefPtr<Core::File>, file);
+};
+
+CONSTRUCTOR(File)
+{
+    __CONSTRUCTOR(File)
+
+    FUNCTION(exists);
+    FUNCTION(is_directory);
+};
+
+PROTOTYPE(File)
+{
+    __PROTOTYPE(File)
+
+    FUNCTION(is_directory);
+    FUNCTION(open);
+    FUNCTION(close);
+    FUNCTION(read);
+    FUNCTION(read_line);
+    FUNCTION(read_all);
+    FUNCTION(write);
+    FUNCTION(seek);
+    PROPERTY_GETTER(can_read);
+    PROPERTY_GETTER(can_read_line);
+    PROPERTY_GETTER(mode);
+    PROPERTY_GETTER(is_open);
+    PROPERTY_GETTER(eof);
+    PROPERTY_GETTER(has_error);
+    PROPERTY_GETTER(error);
+    PROPERTY_GETTER(error_string);
+    PROPERTY_GETTER(filename);
+    PROPERTY_SETTER(filename);
+};
+
+}
 }

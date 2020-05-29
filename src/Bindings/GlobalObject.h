@@ -27,6 +27,7 @@
 #pragma once
 
 #include "../Forward.h"
+#include "LibCore/File.h"
 
 #include <LibJS/Interpreter.h>
 #include <LibJS/Runtime/Error.h>
