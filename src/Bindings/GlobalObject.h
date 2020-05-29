@@ -28,6 +28,7 @@
 
 #include "../Forward.h"
 #include "LibCore/File.h"
+#include "LibGUI/Application.h"
 #include "LibGUI/Notification.h"
 
 #include <LibJS/Interpreter.h>
