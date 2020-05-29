@@ -40,7 +40,9 @@ void GlobalObject::initialize()
 
     u8 attr = JS::Attribute::Writable | JS::Attribute::Configurable;
     auto* core_object = JS::Object::create_empty(interpreter(), interpreter().global_object());
+    auto* gui_object = JS::Object::create_empty(interpreter(), interpreter().global_object());
     define_property("Core", core_object, attr);
+    define_property("GUI", gui_object, attr);
 
 #define __JS_BINDINGS_ENUMERATE(Namespace, ObjectName, object_name, ClassName, class_name, PrototypeName, ConstructorName)                                                           \
     m_##object_name##_##class_name##_prototype = heap().allocate<Namespace::PrototypeName>();                                                                                        \
