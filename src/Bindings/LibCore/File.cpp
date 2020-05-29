@@ -246,88 +246,16 @@ JS::Value FilePrototype::read_all(JS::Interpreter& interpreter)
     return JS::js_string(interpreter, byte_buffer.is_empty() ? "" : String::copy(byte_buffer));
 }
 
-JS::Value FilePrototype::can_read_getter(JS::Interpreter& interpreter)
-{
-    auto* file = file_from(interpreter);
-    if (!file)
-        return {};
-    return JS::Value(file->can_read());
-}
-
-JS::Value FilePrototype::can_read_line_getter(JS::Interpreter& interpreter)
-{
-    auto* file = file_from(interpreter);
-    if (!file)
-        return {};
-    return JS::Value(file->can_read_line());
-}
-
-JS::Value FilePrototype::mode_getter(JS::Interpreter& interpreter)
-{
-    auto* file = file_from(interpreter);
-    if (!file)
-        return {};
-    return JS::Value(file->mode());
-}
-
-JS::Value FilePrototype::is_open_getter(JS::Interpreter& interpreter)
-{
-    auto* file = file_from(interpreter);
-    if (!file)
-        return {};
-    return JS::Value(file->is_open());
-}
-
-JS::Value FilePrototype::eof_getter(JS::Interpreter& interpreter)
-{
-    auto* file = file_from(interpreter);
-    if (!file)
-        return {};
-    return JS::Value(file->eof());
-}
-
-JS::Value FilePrototype::has_error_getter(JS::Interpreter& interpreter)
-{
-    auto* file = file_from(interpreter);
-    if (!file)
-        return {};
-    return JS::Value(file->has_error());
-}
-
-JS::Value FilePrototype::error_getter(JS::Interpreter& interpreter)
-{
-    auto* file = file_from(interpreter);
-    if (!file)
-        return {};
-    return JS::Value(file->error());
-}
-
-JS::Value FilePrototype::error_string_getter(JS::Interpreter& interpreter)
-{
-    auto* file = file_from(interpreter);
-    if (!file)
-        return {};
-    return JS::js_string(interpreter, String(file->error_string()));
-}
-
-JS::Value FilePrototype::filename_getter(JS::Interpreter& interpreter)
-{
-    auto* file = file_from(interpreter);
-    if (!file)
-        return {};
-    return JS::js_string(interpreter, file->filename());
-}
-
-void FilePrototype::filename_setter(JS::Interpreter& interpreter, JS::Value value)
-{
-    auto* file = file_from(interpreter);
-    if (!file)
-        return;
-    auto filename = value.to_string(interpreter);
-    if (interpreter.exception())
-        return;
-    file->set_filename(filename);
-}
+SIMPLE_GETTER(FilePrototype, file, can_read)
+SIMPLE_GETTER(FilePrototype, file, can_read_line)
+SIMPLE_GETTER(FilePrototype, file, mode)
+SIMPLE_GETTER(FilePrototype, file, is_open)
+SIMPLE_GETTER(FilePrototype, file, eof)
+SIMPLE_GETTER(FilePrototype, file, has_error)
+SIMPLE_GETTER(FilePrototype, file, error)
+SIMPLE_STRING_GETTER(FilePrototype, file, error_string)
+SIMPLE_STRING_GETTER(FilePrototype, file, filename)
+SIMPLE_STRING_SETTER(FilePrototype, file, filename)
 // END_PROTOTYPE
 
 }

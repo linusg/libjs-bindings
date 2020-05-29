@@ -94,43 +94,10 @@ JS::Value NotificationPrototype::show(JS::Interpreter& interpreter)
     return JS::js_undefined();
 }
 
-JS::Value NotificationPrototype::text_getter(JS::Interpreter& interpreter)
-{
-    auto* notification = notification_from(interpreter);
-    if (!notification)
-        return {};
-    return JS::js_string(interpreter, notification->text());
-}
-
-void NotificationPrototype::text_setter(JS::Interpreter& interpreter, JS::Value value)
-{
-    auto* notification = notification_from(interpreter);
-    if (!notification)
-        return;
-    auto text = value.to_string(interpreter);
-    if (interpreter.exception())
-        return;
-    notification->set_text(text);
-}
-
-JS::Value NotificationPrototype::title_getter(JS::Interpreter& interpreter)
-{
-    auto* notification = notification_from(interpreter);
-    if (!notification)
-        return {};
-    return JS::js_string(interpreter, notification->title());
-}
-
-void NotificationPrototype::title_setter(JS::Interpreter& interpreter, JS::Value value)
-{
-    auto* notification = notification_from(interpreter);
-    if (!notification)
-        return;
-    auto title = value.to_string(interpreter);
-    if (interpreter.exception())
-        return;
-    notification->set_title(title);
-}
+SIMPLE_STRING_GETTER(NotificationPrototype, notification, text)
+SIMPLE_STRING_SETTER(NotificationPrototype, notification, text)
+SIMPLE_STRING_GETTER(NotificationPrototype, notification, title)
+SIMPLE_STRING_SETTER(NotificationPrototype, notification, title)
 // END_PROTOTYPE
 
 }

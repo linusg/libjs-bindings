@@ -80,3 +80,36 @@ private:                                    \
 #define FUNCTION(name) static JS::Value name(JS::Interpreter&)
 #define PROPERTY_GETTER(name) static JS::Value name##_getter(JS::Interpreter&)
 #define PROPERTY_SETTER(name) static void name##_setter(JS::Interpreter&, JS::Value)
+
+#define SIMPLE_GETTER(Prototype, object, name)                       \
+    JS::Value Prototype::name##_getter(JS::Interpreter& interpreter) \
+    {                                                                \
+        auto* object = object##_from(interpreter);                   \
+        if (!object)                                                 \
+            return {};                                               \
+        return JS::Value(object->name());                            \
+    }
+
+#define SIMPLE_STRING_GETTER(Prototype, object, name)                \
+    JS::Value Prototype::name##_getter(JS::Interpreter& interpreter) \
+    {                                                                \
+        auto* object = object##_from(interpreter);                   \
+        if (!object)                                                 \
+            return {};                                               \
+        return JS::js_string(interpreter, object->name());           \
+    }
+
+#define _SIMPLE_SETTER(Prototype, object, name, type)                            \
+    void Prototype::name##_setter(JS::Interpreter& interpreter, JS::Value value) \
+    {                                                                            \
+        auto* object = object##_from(interpreter);                               \
+        if (!object)                                                             \
+            return;                                                              \
+        auto name = value.to_##type(interpreter);                                \
+        if (interpreter.exception())                                             \
+            return;                                                              \
+        object->set_##name(name);                                                \
+    }
+
+#define SIMPLE_STRING_SETTER(Prototype, object, name) \
+    _SIMPLE_SETTER(Prototype, object, name, string)

@@ -93,24 +93,8 @@ JS::Value WindowPrototype::show(JS::Interpreter& interpreter)
     return JS::js_undefined();
 }
 
-JS::Value WindowPrototype::title_getter(JS::Interpreter& interpreter)
-{
-    auto* window = window_from(interpreter);
-    if (!window)
-        return {};
-    return JS::js_string(interpreter, window->title());
-}
-
-void WindowPrototype::title_setter(JS::Interpreter& interpreter, JS::Value value)
-{
-    auto* window = window_from(interpreter);
-    if (!window)
-        return;
-    auto title = value.to_string(interpreter);
-    if (interpreter.exception())
-        return;
-    window->set_title(title);
-}
+SIMPLE_STRING_GETTER(WindowPrototype, window, title)
+SIMPLE_STRING_SETTER(WindowPrototype, window, title)
 // END_PROTOTYPE
 
 }
