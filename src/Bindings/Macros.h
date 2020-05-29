@@ -113,3 +113,16 @@ private:                                    \
 
 #define SIMPLE_STRING_SETTER(Prototype, object, name) \
     _SIMPLE_SETTER(Prototype, object, name, string)
+
+#define THIS_OBJECT_FROM_INTERPRETER(T, Name, name)                               \
+    static T* name##_from(JS::Interpreter& interpreter)                           \
+    {                                                                             \
+        auto* this_object = interpreter.this_value().to_object(interpreter);      \
+        if (!this_object)                                                         \
+            return nullptr;                                                       \
+        if (StringView(#Name) != this_object->class_name()) {                     \
+            interpreter.throw_exception<JS::TypeError>("Not a " #Name " object"); \
+            return nullptr;                                                       \
+        }                                                                         \
+        return static_cast<Name*>(this_object)->name();                           \
+    }

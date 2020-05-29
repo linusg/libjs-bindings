@@ -73,17 +73,7 @@ NotificationPrototype::NotificationPrototype()
     define_native_property("title", title_getter, title_setter, 0);
 }
 
-static GUI::Notification* notification_from(JS::Interpreter& interpreter)
-{
-    auto* this_object = interpreter.this_value().to_object(interpreter);
-    if (!this_object)
-        return nullptr;
-    if (StringView("Notification") != this_object->class_name()) {
-        interpreter.throw_exception<JS::TypeError>("Not a Notification object");
-        return nullptr;
-    }
-    return static_cast<Notification*>(this_object)->notification();
-}
+THIS_OBJECT_FROM_INTERPRETER(GUI::Notification, Notification, notification)
 
 JS::Value NotificationPrototype::show(JS::Interpreter& interpreter)
 {

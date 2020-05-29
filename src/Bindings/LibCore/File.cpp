@@ -159,17 +159,7 @@ static bool is_valid_seek_mode(i32 seek_mode)
         false;
 }
 
-static Core::File* file_from(JS::Interpreter& interpreter)
-{
-    auto* this_object = interpreter.this_value().to_object(interpreter);
-    if (!this_object)
-        return nullptr;
-    if (StringView("File") != this_object->class_name()) {
-        interpreter.throw_exception<JS::TypeError>("Not a File object");
-        return nullptr;
-    }
-    return static_cast<File*>(this_object)->file();
-}
+THIS_OBJECT_FROM_INTERPRETER(Core::File, File, file)
 
 JS::Value FilePrototype::is_directory(JS::Interpreter& interpreter)
 {

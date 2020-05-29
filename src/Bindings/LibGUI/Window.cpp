@@ -72,17 +72,7 @@ WindowPrototype::WindowPrototype()
     define_native_property("title", title_getter, title_setter, 0);
 }
 
-static GUI::Window* window_from(JS::Interpreter& interpreter)
-{
-    auto* this_object = interpreter.this_value().to_object(interpreter);
-    if (!this_object)
-        return nullptr;
-    if (StringView("Window") != this_object->class_name()) {
-        interpreter.throw_exception<JS::TypeError>("Not a Window object");
-        return nullptr;
-    }
-    return static_cast<Window*>(this_object)->window();
-}
+THIS_OBJECT_FROM_INTERPRETER(GUI::Window, Window, window)
 
 JS::Value WindowPrototype::show(JS::Interpreter& interpreter)
 {
