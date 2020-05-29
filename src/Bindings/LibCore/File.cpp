@@ -127,6 +127,7 @@ FilePrototype::FilePrototype()
     define_native_function("readLine", read_line, 1, attr);
     define_native_function("readAll", read_all, 0, attr);
     define_native_function("write", write, 1, attr);
+    define_native_function("seek", seek, 1, attr);
 
     define_native_property("canRead", can_read_getter, nullptr, 0);
     define_native_property("canReadLine", can_read_line_getter, nullptr, 0);
@@ -216,6 +217,15 @@ JS::Value FilePrototype::read_line(JS::Interpreter& interpreter)
     return JS::js_string(interpreter, byte_buffer.is_empty() ? "" : String::copy(byte_buffer));
 }
 
+JS::Value FilePrototype::read_all(JS::Interpreter& interpreter)
+{
+    auto* file = file_from(interpreter);
+    if (!file)
+        return {};
+    auto byte_buffer = file->read_all();
+    return JS::js_string(interpreter, byte_buffer.is_empty() ? "" : String::copy(byte_buffer));
+}
+
 JS::Value FilePrototype::write(JS::Interpreter& interpreter)
 {
     auto* file = file_from(interpreter);
@@ -227,13 +237,24 @@ JS::Value FilePrototype::write(JS::Interpreter& interpreter)
     return JS::Value(file->write(text));
 }
 
-JS::Value FilePrototype::read_all(JS::Interpreter& interpreter)
+JS::Value FilePrototype::seek(JS::Interpreter& interpreter)
 {
     auto* file = file_from(interpreter);
     if (!file)
         return {};
-    auto byte_buffer = file->read_all();
-    return JS::js_string(interpreter, byte_buffer.is_empty() ? "" : String::copy(byte_buffer));
+    auto offset = interpreter.argument(0).to_size_t(interpreter);
+    if (interpreter.exception())
+        return {};
+    if (interpreter.argument_count() < 2)
+        return JS::Value(file->seek(offset));
+    auto seek_mode = interpreter.argument(0).to_i32(interpreter);
+    if (interpreter.exception())
+        return {};
+    if (!is_valid_seek_mode(seek_mode)) {
+        interpreter.throw_exception<JS::TypeError>("Invalid seek mode");
+        return {};
+    }
+    return JS::Value(file->seek(offset, static_cast<Core::IODevice::SeekMode>(seek_mode)));
 }
 
 SIMPLE_GETTER(FilePrototype, file, can_read)
