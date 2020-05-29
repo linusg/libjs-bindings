@@ -30,6 +30,7 @@
 #include "LibCore/File.h"
 #include "LibGUI/Application.h"
 #include "LibGUI/Notification.h"
+#include "LibGUI/Window.h"
 
 #include <LibJS/Interpreter.h>
 #include <LibJS/Runtime/Error.h>

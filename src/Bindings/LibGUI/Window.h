@@ -26,21 +26,33 @@
 
 #pragma once
 
-#define JS_BINDINGS_ENUMERATE_NATIVE_OBJECTS                                                                              \
-    __JS_BINDINGS_ENUMERATE(LibCore, Core, core, File, file, FilePrototype, FileConstructor)                              \
-    __JS_BINDINGS_ENUMERATE(LibGUI, GUI, gui, Application, application, ApplicationPrototype, ApplicationConstructor)     \
-    __JS_BINDINGS_ENUMERATE(LibGUI, GUI, gui, Notification, notification, NotificationPrototype, NotificationConstructor) \
-    __JS_BINDINGS_ENUMERATE(LibGUI, GUI, gui, Window, window, WindowPrototype, WindowConstructor)
+#include "../Macros.h"
+
+#include <LibGUI/Window.h>
+#include <LibJS/Runtime/NativeFunction.h>
 
 namespace Bindings {
+namespace LibGUI {
 
-#define __JS_BINDINGS_ENUMERATE(Namespace, ObjectName, object_name, ClassName, class_name, PrototypeName, ConstructorName) \
-    namespace Namespace {                                                                                                  \
-    class ClassName;                                                                                                       \
-    class ConstructorName;                                                                                                 \
-    class PrototypeName;                                                                                                   \
-    }
-JS_BINDINGS_ENUMERATE_NATIVE_OBJECTS
-#undef __JS_BINDINGS_ENUMERATE
+OBJECT(Window)
+{
+    __OBJECT(Window)
 
+    MEMBER(NonnullRefPtr<GUI::Window>, window);
+};
+
+CONSTRUCTOR(Window) {
+    __CONSTRUCTOR(Window)
+};
+
+PROTOTYPE(Window)
+{
+    __PROTOTYPE(Window)
+
+    FUNCTION(show);
+    PROPERTY_GETTER(title);
+    PROPERTY_SETTER(title);
+};
+
+}
 }

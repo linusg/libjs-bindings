@@ -7,6 +7,7 @@ set(SOURCES
     src/Bindings/LibCore/File.cpp
     src/Bindings/LibGUI/Application.cpp
     src/Bindings/LibGUI/Notification.cpp
+    src/Bindings/LibGUI/Window.cpp
 )
 
 add_executable(jsb ${SOURCES})
