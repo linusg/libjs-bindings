@@ -2,6 +2,8 @@
 
 > LibJS Bindings for some of the SerenityOS C++ libraries
 
+![screenshot](screenshot.png)
+
 ## Installation
 
 Make sure you've already built Serenity and exposed `SERENITY_ROOT`. Then:
