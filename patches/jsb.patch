@@ -1,0 +1,70 @@
+--- src/jsb.cpp	2020-05-29 19:13:25.207663633 +0100
++++ src/jsb.cpp	2020-05-29 19:13:39.969608568 +0100
+@@ -24,11 +24,13 @@
+  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+  */
+ 
++#include "Bindings/GlobalObject.h"
+ #include <AK/ByteBuffer.h>
+ #include <AK/NonnullOwnPtr.h>
+ #include <AK/StringBuilder.h>
+ #include <LibCore/ArgsParser.h>
+ #include <LibCore/File.h>
++#include <LibGUI/Application.h>
+ #include <LibJS/AST.h>
+ #include <LibJS/Console.h>
+ #include <LibJS/Interpreter.h>
+@@ -48,7 +50,7 @@
+ 
+ Vector<String> repl_statements;
+ 
+-class ReplObject : public JS::GlobalObject {
++class ReplObject : public Bindings::GlobalObject {
+ public:
+     ReplObject();
+     virtual void initialize() override;
+@@ -64,6 +66,9 @@
+     static JS::Value save_to_file(JS::Interpreter&);
+ };
+ 
++int g_argc;
++char** g_argv;
++
+ static bool s_dump_ast = false;
+ static bool s_print_last_result = false;
+ static RefPtr<Line::Editor> s_editor;
+@@ -326,7 +331,11 @@
+ 
+ void ReplObject::initialize()
+ {
+-    GlobalObject::initialize();
++    Bindings::GlobalObject::initialize();
++
++    set_argc(g_argc);
++    set_argv(g_argv);
++
+     define_native_function("exit", exit_interpreter);
+     define_native_function("help", repl_help);
+     define_native_function("load", load_file, 1);
+@@ -498,6 +507,12 @@
+ 
+ int main(int argc, char** argv)
+ {
++    g_argc = argc;
++    g_argv = argv;
++
++    // FIXME: Do this on demand, e.g. "const app = GUI.Application(argc, argv);"
++    GUI::Application app(argc, argv);
++
+     bool gc_on_every_allocation = false;
+     bool disable_syntax_highlight = false;
+     bool test_mode = false;
+@@ -803,7 +818,7 @@
+         s_editor->on_tab_complete = move(complete);
+         repl(*interpreter);
+     } else {
+-        interpreter = JS::Interpreter::create<JS::GlobalObject>();
++        interpreter = JS::Interpreter::create<ReplObject>();
+         ReplConsoleClient console_client(interpreter->console());
+         interpreter->console().set_client(console_client);
+         interpreter->heap().set_should_collect_on_every_allocation(gc_on_every_allocation);
