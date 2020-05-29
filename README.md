@@ -11,7 +11,10 @@ Make sure you've already built Serenity and exposed `SERENITY_ROOT`. Then:
 
 It will download a fresh copy of Serenity's `Userland/js.cpp`, patch it to
 replace the default global object and install it as `jsb` (JavaScript Bindings)
-in `/usr/local/bin`, along with some examples in `/usr/local/share/jsb/examples`.
+in `$SERENITY_ROOT/Build/Root/usr/local/bin`, along with some examples in
+`$SERENITY_ROOT/Build/Root/usr/local/share/jsb/examples`.
+
+Then run `make image && make run`.
 
 ## Why
 
