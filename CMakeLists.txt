@@ -11,7 +11,7 @@ set(SOURCES
 )
 
 add_executable(jsb ${SOURCES})
-target_link_libraries(jsb gui gfx ipc core js line)
+target_link_libraries(jsb gui gfx ipc core js crypto line)
 
 install(TARGETS jsb RUNTIME DESTINATION local/bin)
 install(DIRECTORY examples DESTINATION local/share/jsb)

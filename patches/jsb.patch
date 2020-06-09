@@ -1,5 +1,5 @@
---- src/jsb.cpp	2020-05-29 19:13:25.207663633 +0100
-+++ src/jsb.cpp	2020-05-29 19:13:39.969608568 +0100
+--- src/jsb.cpp	2020-06-09 15:19:39.311000000 +0100
++++ src/jsb.cpp	2020-06-09 15:21:14.462778154 +0100
 @@ -24,11 +24,13 @@
   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   */
@@ -14,7 +14,7 @@
  #include <LibJS/AST.h>
  #include <LibJS/Console.h>
  #include <LibJS/Interpreter.h>
-@@ -48,7 +50,7 @@
+@@ -49,7 +51,7 @@
  
  Vector<String> repl_statements;
  
@@ -23,7 +23,7 @@
  public:
      ReplObject();
      virtual void initialize() override;
-@@ -64,6 +66,9 @@
+@@ -65,6 +67,9 @@
      static JS::Value save_to_file(JS::Interpreter&);
  };
  
@@ -33,7 +33,7 @@
  static bool s_dump_ast = false;
  static bool s_print_last_result = false;
  static RefPtr<Line::Editor> s_editor;
-@@ -326,7 +331,11 @@
+@@ -372,7 +377,11 @@
  
  void ReplObject::initialize()
  {
@@ -43,10 +43,10 @@
 +    set_argc(g_argc);
 +    set_argv(g_argv);
 +
+     define_property("global", this, JS::Attribute::Enumerable);
      define_native_function("exit", exit_interpreter);
      define_native_function("help", repl_help);
-     define_native_function("load", load_file, 1);
-@@ -498,6 +507,12 @@
+@@ -546,6 +555,12 @@
  
  int main(int argc, char** argv)
  {
@@ -59,7 +59,7 @@
      bool gc_on_every_allocation = false;
      bool disable_syntax_highlight = false;
      bool test_mode = false;
-@@ -803,7 +818,7 @@
+@@ -854,7 +869,7 @@
          s_editor->on_tab_complete = move(complete);
          repl(*interpreter);
      } else {

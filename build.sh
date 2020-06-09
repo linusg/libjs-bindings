@@ -4,7 +4,7 @@ export CC="i686-pc-serenity-gcc"
 export CXX="i686-pc-serenity-g++"
 export PATH="${SERENITY_ROOT}/Toolchain/Local/bin:${PATH}"
 
-commit="d52ea37717eb80388606d2e5945599d00ac0688d"
+commit="a85506009fc11513d48b7f821917fc9e2324d811"
 js_url="https://raw.githubusercontent.com/SerenityOS/serenity/${commit}/Userland/js.cpp"
 
 rm -f src/jsb.cpp
