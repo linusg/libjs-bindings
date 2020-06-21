@@ -85,7 +85,6 @@ private:                                \
                                                                                \
     private:
 
-#define FUNCTION(name) static JS::Value name(JS::Interpreter&, JS::GlobalObject&);
 #define PROPERTY_GETTER(name) static JS::Value name##_getter(JS::Interpreter&, JS::GlobalObject&);
 #define PROPERTY_SETTER(name) static void name##_setter(JS::Interpreter&, JS::GlobalObject&, JS::Value);
 

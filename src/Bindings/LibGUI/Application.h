@@ -39,11 +39,11 @@ OBJECT(Application)
 END
 
 CONSTRUCTOR(Application)
-    FUNCTION(the)
+    JS_DECLARE_NATIVE_FUNCTION(the);
 END
 
 PROTOTYPE(Application)
-    FUNCTION(exec)
+    JS_DECLARE_NATIVE_FUNCTION(exec);
 END
 // clang-format on
 

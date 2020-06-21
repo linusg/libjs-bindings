@@ -43,7 +43,7 @@ CONSTRUCTOR(Notification)
 END
 
 PROTOTYPE(Notification)
-    FUNCTION(show)
+    JS_DECLARE_NATIVE_FUNCTION(show);
     PROPERTY_GETTER(text)
     PROPERTY_SETTER(text)
     PROPERTY_GETTER(title)

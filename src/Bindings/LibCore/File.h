@@ -40,19 +40,19 @@ OBJECT_WITH_ARGS(File, const StringView& filename)
 END
 
 CONSTRUCTOR(File)
-    FUNCTION(exists)
-    FUNCTION(is_directory)
+    JS_DECLARE_NATIVE_FUNCTION(exists);
+    JS_DECLARE_NATIVE_FUNCTION(is_directory);
 END
 
 PROTOTYPE(File)
-    FUNCTION(is_directory)
-    FUNCTION(open)
-    FUNCTION(close)
-    FUNCTION(read)
-    FUNCTION(read_line)
-    FUNCTION(read_all)
-    FUNCTION(write)
-    FUNCTION(seek)
+    JS_DECLARE_NATIVE_FUNCTION(is_directory);
+    JS_DECLARE_NATIVE_FUNCTION(open);
+    JS_DECLARE_NATIVE_FUNCTION(close);
+    JS_DECLARE_NATIVE_FUNCTION(read);
+    JS_DECLARE_NATIVE_FUNCTION(read_line);
+    JS_DECLARE_NATIVE_FUNCTION(read_all);
+    JS_DECLARE_NATIVE_FUNCTION(write);
+    JS_DECLARE_NATIVE_FUNCTION(seek);
     PROPERTY_GETTER(can_read)
     PROPERTY_GETTER(can_read_line)
     PROPERTY_GETTER(mode)
