@@ -44,8 +44,8 @@ END
 
 PROTOTYPE(Window)
     JS_DECLARE_NATIVE_FUNCTION(show);
-    PROPERTY_GETTER(title)
-    PROPERTY_SETTER(title)
+    JS_DECLARE_NATIVE_GETTER(title_getter);
+    JS_DECLARE_NATIVE_SETTER(title_setter);
 END
 // clang-format on
 

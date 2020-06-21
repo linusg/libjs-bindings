@@ -85,9 +85,6 @@ private:                                \
                                                                                \
     private:
 
-#define PROPERTY_GETTER(name) static JS::Value name##_getter(JS::Interpreter&, JS::GlobalObject&);
-#define PROPERTY_SETTER(name) static void name##_setter(JS::Interpreter&, JS::GlobalObject&, JS::Value);
-
 #define SIMPLE_GETTER(Prototype, object, name)                                                        \
     JS::Value Prototype::name##_getter(JS::Interpreter& interpreter, JS::GlobalObject& global_object) \
     {                                                                                                 \

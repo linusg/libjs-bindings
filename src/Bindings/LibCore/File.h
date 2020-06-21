@@ -53,16 +53,16 @@ PROTOTYPE(File)
     JS_DECLARE_NATIVE_FUNCTION(read_all);
     JS_DECLARE_NATIVE_FUNCTION(write);
     JS_DECLARE_NATIVE_FUNCTION(seek);
-    PROPERTY_GETTER(can_read)
-    PROPERTY_GETTER(can_read_line)
-    PROPERTY_GETTER(mode)
-    PROPERTY_GETTER(is_open)
-    PROPERTY_GETTER(eof)
-    PROPERTY_GETTER(has_error)
-    PROPERTY_GETTER(error)
-    PROPERTY_GETTER(error_string)
-    PROPERTY_GETTER(filename)
-    PROPERTY_SETTER(filename)
+    JS_DECLARE_NATIVE_GETTER(can_read_getter);
+    JS_DECLARE_NATIVE_GETTER(can_read_line_getter);
+    JS_DECLARE_NATIVE_GETTER(mode_getter);
+    JS_DECLARE_NATIVE_GETTER(is_open_getter);
+    JS_DECLARE_NATIVE_GETTER(eof_getter);
+    JS_DECLARE_NATIVE_GETTER(has_error_getter);
+    JS_DECLARE_NATIVE_GETTER(error_getter);
+    JS_DECLARE_NATIVE_GETTER(error_string_getter);
+    JS_DECLARE_NATIVE_GETTER(filename_getter);
+    JS_DECLARE_NATIVE_SETTER(filename_setter);
 END
 // clang-format on
 
