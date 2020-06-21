@@ -59,8 +59,8 @@ private:
     virtual const char* class_name() const override { return "GlobalObject"; }
     virtual void visit_children(Visitor&) override;
 
-    static JS::Value argc_getter(JS::Interpreter&);
-    static JS::Value argv_getter(JS::Interpreter&);
+    static JS::Value argc_getter(JS::Interpreter&, JS::GlobalObject&);
+    static JS::Value argv_getter(JS::Interpreter&, JS::GlobalObject&);
 
     int m_argc { 0 };
     char** m_argv {};

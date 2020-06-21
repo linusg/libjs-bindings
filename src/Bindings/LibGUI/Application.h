@@ -34,24 +34,18 @@
 namespace Bindings {
 namespace LibGUI {
 
+// clang-format off
 OBJECT(Application)
-{
-    __OBJECT(Application)
-};
+END
 
 CONSTRUCTOR(Application)
-{
-    __CONSTRUCTOR(Application)
-
-    FUNCTION(the);
-};
+    FUNCTION(the)
+END
 
 PROTOTYPE(Application)
-{
-    __PROTOTYPE(Application)
-
-    FUNCTION(exec);
-};
+    FUNCTION(exec)
+END
+// clang-format on
 
 }
 }

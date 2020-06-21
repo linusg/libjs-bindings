@@ -49,7 +49,8 @@ namespace LibCore {
 // BEGIN_OBJECT
 File* File::create(JS::GlobalObject& global_object, const StringView& filename)
 {
-    return global_object.heap().allocate<File>(*static_cast<GlobalObject&>(global_object).core_file_prototype(), filename);
+    auto& interpreter = global_object.interpreter();
+    return interpreter.heap().allocate<File>(global_object, *static_cast<GlobalObject&>(global_object).core_file_prototype(), filename);
 }
 
 File::File(JS::Object& prototype, const StringView& filename)
@@ -61,23 +62,29 @@ File::File(JS::Object& prototype, const StringView& filename)
 // END_OBJECT
 
 // BEGIN_CONSTRUCTOR
-FileConstructor::FileConstructor()
-    : JS::NativeFunction(*interpreter().global_object().function_prototype())
+FileConstructor::FileConstructor(JS::GlobalObject& global_object)
+    : JS::NativeFunction(*global_object.function_prototype())
 {
+}
+
+void FileConstructor::initialize(JS::Interpreter& interpreter, JS::GlobalObject& global_object)
+{
+    JS::NativeFunction::initialize(interpreter, global_object);
+
     define_property("length", JS::Value(1), JS::Attribute::Configurable);
 
     u8 attr = JS::Attribute::Writable | JS::Attribute::Configurable;
     define_native_function("exists", exists, 1, attr);
     define_native_function("isDirectory", is_directory, 1, attr);
 
-    auto* open_mode = JS::Object::create_empty(interpreter(), interpreter().global_object());
+    auto* open_mode = JS::Object::create_empty(interpreter, global_object);
     define_property("OpenMode", open_mode, JS::Attribute::Enumerable);
 #define __ENUMERATE_FILE_OPEN_MODES(key, value) \
     open_mode->define_property(#key, JS::Value(Core::File::OpenMode::value), JS::Attribute::Enumerable);
     FILE_OPEN_MODES
 #undef __ENUMERATE_FILE_OPEN_MODES
 
-    auto* seek_mode = JS::Object::create_empty(interpreter(), interpreter().global_object());
+    auto* seek_mode = JS::Object::create_empty(interpreter, global_object);
     define_property("SeekMode", seek_mode, JS::Attribute::Enumerable);
 #define __ENUMERATE_FILE_SEEK_MODES(key, value) \
     seek_mode->define_property(#key, JS::Value((i32)Core::IODevice::SeekMode::value), JS::Attribute::Enumerable);
@@ -98,7 +105,7 @@ JS::Value FileConstructor::construct(JS::Interpreter& interpreter)
     return File::create(interpreter.global_object(), filename);
 }
 
-JS::Value FileConstructor::exists(JS::Interpreter& interpreter)
+JS_DEFINE_NATIVE_FUNCTION(FileConstructor::exists)
 {
     auto filename = interpreter.argument(0).to_string(interpreter);
     if (interpreter.exception())
@@ -106,7 +113,7 @@ JS::Value FileConstructor::exists(JS::Interpreter& interpreter)
     return JS::Value(Core::File::exists(filename));
 }
 
-JS::Value FileConstructor::is_directory(JS::Interpreter& interpreter)
+JS_DEFINE_NATIVE_FUNCTION(FileConstructor::is_directory)
 {
     auto filename = interpreter.argument(0).to_string(interpreter);
     if (interpreter.exception())
@@ -116,9 +123,15 @@ JS::Value FileConstructor::is_directory(JS::Interpreter& interpreter)
 // END_CONSTRUCTOR
 
 // BEGIN_PROTOTYPE
-FilePrototype::FilePrototype()
-    : Object(interpreter().global_object().object_prototype())
+FilePrototype::FilePrototype(JS::GlobalObject& global_object)
+    : JS::Object(global_object.object_prototype())
 {
+}
+
+void FilePrototype::initialize(JS::Interpreter& interpreter, JS::GlobalObject& global_object)
+{
+    JS::Object::initialize(interpreter, global_object);
+
     u8 attr = JS::Attribute::Writable | JS::Attribute::Configurable;
     define_native_function("isDirectory", is_directory, 0, attr);
     define_native_function("open", open, 1, attr);
@@ -162,17 +175,17 @@ static bool is_valid_seek_mode(i32 seek_mode)
 
 THIS_OBJECT_FROM_INTERPRETER(Core::File, File, file)
 
-JS::Value FilePrototype::is_directory(JS::Interpreter& interpreter)
+JS_DEFINE_NATIVE_FUNCTION(FilePrototype::is_directory)
 {
-    auto* file = file_from(interpreter);
+    auto* file = file_from(interpreter, global_object);
     if (!file)
         return {};
     return JS::Value(file->is_directory());
 }
 
-JS::Value FilePrototype::open(JS::Interpreter& interpreter)
+JS_DEFINE_NATIVE_FUNCTION(FilePrototype::open)
 {
-    auto* file = file_from(interpreter);
+    auto* file = file_from(interpreter, global_object);
     if (!file)
         return {};
     auto open_mode = interpreter.argument(0).to_i32(interpreter);
@@ -185,17 +198,17 @@ JS::Value FilePrototype::open(JS::Interpreter& interpreter)
     return JS::Value(file->open(static_cast<Core::File::OpenMode>(open_mode)));
 }
 
-JS::Value FilePrototype::close(JS::Interpreter& interpreter)
+JS_DEFINE_NATIVE_FUNCTION(FilePrototype::close)
 {
-    auto* file = file_from(interpreter);
+    auto* file = file_from(interpreter, global_object);
     if (!file)
         return {};
     return JS::Value(file->close());
 }
 
-JS::Value FilePrototype::read(JS::Interpreter& interpreter)
+JS_DEFINE_NATIVE_FUNCTION(FilePrototype::read)
 {
-    auto* file = file_from(interpreter);
+    auto* file = file_from(interpreter, global_object);
     if (!file)
         return {};
     auto max_size = interpreter.argument(0).to_size_t(interpreter);
@@ -205,9 +218,9 @@ JS::Value FilePrototype::read(JS::Interpreter& interpreter)
     return JS::js_string(interpreter, byte_buffer.is_empty() ? "" : String::copy(byte_buffer));
 }
 
-JS::Value FilePrototype::read_line(JS::Interpreter& interpreter)
+JS_DEFINE_NATIVE_FUNCTION(FilePrototype::read_line)
 {
-    auto* file = file_from(interpreter);
+    auto* file = file_from(interpreter, global_object);
     if (!file)
         return {};
     auto max_size = interpreter.argument(0).to_size_t(interpreter);
@@ -217,18 +230,18 @@ JS::Value FilePrototype::read_line(JS::Interpreter& interpreter)
     return JS::js_string(interpreter, byte_buffer.is_empty() ? "" : String::copy(byte_buffer));
 }
 
-JS::Value FilePrototype::read_all(JS::Interpreter& interpreter)
+JS_DEFINE_NATIVE_FUNCTION(FilePrototype::read_all)
 {
-    auto* file = file_from(interpreter);
+    auto* file = file_from(interpreter, global_object);
     if (!file)
         return {};
     auto byte_buffer = file->read_all();
     return JS::js_string(interpreter, byte_buffer.is_empty() ? "" : String::copy(byte_buffer));
 }
 
-JS::Value FilePrototype::write(JS::Interpreter& interpreter)
+JS_DEFINE_NATIVE_FUNCTION(FilePrototype::write)
 {
-    auto* file = file_from(interpreter);
+    auto* file = file_from(interpreter, global_object);
     if (!file)
         return {};
     auto text = interpreter.argument(0).to_string(interpreter);
@@ -237,9 +250,9 @@ JS::Value FilePrototype::write(JS::Interpreter& interpreter)
     return JS::Value(file->write(text));
 }
 
-JS::Value FilePrototype::seek(JS::Interpreter& interpreter)
+JS_DEFINE_NATIVE_FUNCTION(FilePrototype::seek)
 {
-    auto* file = file_from(interpreter);
+    auto* file = file_from(interpreter, global_object);
     if (!file)
         return {};
     auto offset = interpreter.argument(0).to_size_t(interpreter);

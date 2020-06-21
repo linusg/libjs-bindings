@@ -24,27 +24,33 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define OBJECT(Name) class Name final : public JS::Object
+#define END \
+    }       \
+    ;
 
-#define __OBJECT(Name)                      \
-public:                                     \
-    static Name* create(JS::GlobalObject&); \
-                                            \
-    Name(JS::Object&);                      \
-    virtual ~Name() override {};            \
-                                            \
-private:                                    \
-    virtual const char* class_name() const override { return #Name; }
+#define OBJECT(Name)                            \
+    class Name final : public JS::Object {      \
+                                                \
+    public:                                     \
+        static Name* create(JS::GlobalObject&); \
+                                                \
+        Name(JS::Object&);                      \
+        virtual ~Name() override {};            \
+                                                \
+    private:                                    \
+        virtual const char* class_name() const override { return #Name; }
 
-#define __OBJECT_WITH_ARGS(Name, args...)         \
-public:                                           \
-    static Name* create(JS::GlobalObject&, args); \
-                                                  \
-    Name(JS::Object&, args);                      \
-    virtual ~Name() override {};                  \
-                                                  \
-private:                                          \
-    virtual const char* class_name() const override { return #Name; }
+#define OBJECT_WITH_ARGS(Name, args...)               \
+    class Name final : public JS::Object {            \
+                                                      \
+    public:                                           \
+        static Name* create(JS::GlobalObject&, args); \
+                                                      \
+        Name(JS::Object&, args);                      \
+        virtual ~Name() override {};                  \
+                                                      \
+    private:                                          \
+        virtual const char* class_name() const override { return #Name; }
 
 #define MEMBER(T, name)                 \
 public:                                 \
@@ -53,76 +59,78 @@ public:                                 \
 private:                                \
     T m_##name;
 
-#define CONSTRUCTOR(Name) class Name##Constructor final : public JS::NativeFunction
+#define CONSTRUCTOR(Name)                                                      \
+    class Name##Constructor final : public JS::NativeFunction {                \
+        JS_OBJECT(Name##Constructor, JS::NativeFunction);                      \
+                                                                               \
+    public:                                                                    \
+        Name##Constructor(JS::GlobalObject&);                                  \
+        virtual void initialize(JS::Interpreter&, JS::GlobalObject&) override; \
+        virtual ~Name##Constructor() override {};                              \
+                                                                               \
+        virtual JS::Value call(JS::Interpreter&) override;                     \
+        virtual JS::Value construct(JS::Interpreter&) override;                \
+                                                                               \
+    private:                                                                   \
+        virtual bool has_constructor() const override { return true; }
 
-#define __CONSTRUCTOR(Name)                                        \
-public:                                                            \
-    Name##Constructor();                                           \
-    virtual ~Name##Constructor() override {};                      \
-                                                                   \
-    virtual JS::Value call(JS::Interpreter&) override;             \
-    virtual JS::Value construct(JS::Interpreter&) override;        \
-                                                                   \
-private:                                                           \
-    virtual bool has_constructor() const override { return true; } \
-    virtual const char* class_name() const override { return #Name "Constructor"; }
+#define PROTOTYPE(Name)                                                        \
+    class Name##Prototype final : public JS::Object {                          \
+        JS_OBJECT(Name##Prototype, JS::Object);                                \
+                                                                               \
+    public:                                                                    \
+        Name##Prototype(JS::GlobalObject&);                                    \
+        virtual void initialize(JS::Interpreter&, JS::GlobalObject&) override; \
+        virtual ~Name##Prototype() override {};                                \
+                                                                               \
+    private:
 
-#define PROTOTYPE(Name) class Name##Prototype final : public JS::Object
+#define FUNCTION(name) static JS::Value name(JS::Interpreter&, JS::GlobalObject&);
+#define PROPERTY_GETTER(name) static JS::Value name##_getter(JS::Interpreter&, JS::GlobalObject&);
+#define PROPERTY_SETTER(name) static void name##_setter(JS::Interpreter&, JS::GlobalObject&, JS::Value);
 
-#define __PROTOTYPE(Name)                   \
-public:                                     \
-    Name##Prototype();                      \
-    virtual ~Name##Prototype() override {}; \
-                                            \
-private:                                    \
-    virtual const char* class_name() const override { return #Name "Prototype"; }
-
-#define FUNCTION(name) static JS::Value name(JS::Interpreter&)
-#define PROPERTY_GETTER(name) static JS::Value name##_getter(JS::Interpreter&)
-#define PROPERTY_SETTER(name) static void name##_setter(JS::Interpreter&, JS::Value)
-
-#define SIMPLE_GETTER(Prototype, object, name)                       \
-    JS::Value Prototype::name##_getter(JS::Interpreter& interpreter) \
-    {                                                                \
-        auto* object = object##_from(interpreter);                   \
-        if (!object)                                                 \
-            return {};                                               \
-        return JS::Value(object->name());                            \
+#define SIMPLE_GETTER(Prototype, object, name)                                                        \
+    JS::Value Prototype::name##_getter(JS::Interpreter& interpreter, JS::GlobalObject& global_object) \
+    {                                                                                                 \
+        auto* object = object##_from(interpreter, global_object);                                     \
+        if (!object)                                                                                  \
+            return {};                                                                                \
+        return JS::Value(object->name());                                                             \
     }
 
-#define SIMPLE_STRING_GETTER(Prototype, object, name)                \
-    JS::Value Prototype::name##_getter(JS::Interpreter& interpreter) \
-    {                                                                \
-        auto* object = object##_from(interpreter);                   \
-        if (!object)                                                 \
-            return {};                                               \
-        return JS::js_string(interpreter, object->name());           \
+#define SIMPLE_STRING_GETTER(Prototype, object, name)                                                 \
+    JS::Value Prototype::name##_getter(JS::Interpreter& interpreter, JS::GlobalObject& global_object) \
+    {                                                                                                 \
+        auto* object = object##_from(interpreter, global_object);                                     \
+        if (!object)                                                                                  \
+            return {};                                                                                \
+        return JS::js_string(interpreter, object->name());                                            \
     }
 
-#define _SIMPLE_SETTER(Prototype, object, name, type)                            \
-    void Prototype::name##_setter(JS::Interpreter& interpreter, JS::Value value) \
-    {                                                                            \
-        auto* object = object##_from(interpreter);                               \
-        if (!object)                                                             \
-            return;                                                              \
-        auto name = value.to_##type(interpreter);                                \
-        if (interpreter.exception())                                             \
-            return;                                                              \
-        object->set_##name(name);                                                \
+#define _SIMPLE_SETTER(Prototype, object, name, type)                                                             \
+    void Prototype::name##_setter(JS::Interpreter& interpreter, JS::GlobalObject& global_object, JS::Value value) \
+    {                                                                                                             \
+        auto* object = object##_from(interpreter, global_object);                                                 \
+        if (!object)                                                                                              \
+            return;                                                                                               \
+        auto name = value.to_##type(interpreter);                                                                 \
+        if (interpreter.exception())                                                                              \
+            return;                                                                                               \
+        object->set_##name(name);                                                                                 \
     }
 
 #define SIMPLE_STRING_SETTER(Prototype, object, name) \
     _SIMPLE_SETTER(Prototype, object, name, string)
 
-#define THIS_OBJECT_FROM_INTERPRETER(T, Name, name)                                                     \
-    static T* name##_from(JS::Interpreter& interpreter)                                                 \
-    {                                                                                                   \
-        auto* this_object = interpreter.this_value(interpreter.global_object()).to_object(interpreter); \
-        if (!this_object)                                                                               \
-            return nullptr;                                                                             \
-        if (StringView(#Name) != this_object->class_name()) {                                           \
-            interpreter.throw_exception<JS::TypeError>("Not a " #Name " object");                       \
-            return nullptr;                                                                             \
-        }                                                                                               \
-        return static_cast<Name*>(this_object)->name();                                                 \
+#define THIS_OBJECT_FROM_INTERPRETER(T, Name, name)                                                      \
+    static T* name##_from(JS::Interpreter& interpreter, JS::GlobalObject& global_object)                 \
+    {                                                                                                    \
+        auto* this_object = interpreter.this_value(global_object).to_object(interpreter, global_object); \
+        if (!this_object)                                                                                \
+            return nullptr;                                                                              \
+        if (StringView(#Name) != this_object->class_name()) {                                            \
+            interpreter.throw_exception<JS::TypeError>("Not a " #Name " object");                        \
+            return nullptr;                                                                              \
+        }                                                                                                \
+        return static_cast<Name*>(this_object)->name();                                                  \
     }

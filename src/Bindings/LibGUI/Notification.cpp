@@ -33,7 +33,8 @@ namespace LibGUI {
 // BEGIN_OBJECT
 Notification* Notification::create(JS::GlobalObject& global_object)
 {
-    return global_object.heap().allocate<Notification>(*static_cast<GlobalObject&>(global_object).gui_notification_prototype());
+    auto& interpreter = global_object.interpreter();
+    return interpreter.heap().allocate<Notification>(global_object, *static_cast<GlobalObject&>(global_object).gui_notification_prototype());
 }
 
 Notification::Notification(JS::Object& prototype)
@@ -45,9 +46,15 @@ Notification::Notification(JS::Object& prototype)
 // END_OBJECT
 
 // BEGIN_CONSTRUCTOR
-NotificationConstructor::NotificationConstructor()
-    : JS::NativeFunction(*interpreter().global_object().function_prototype())
+NotificationConstructor::NotificationConstructor(JS::GlobalObject& global_object)
+    : JS::NativeFunction(*global_object.function_prototype())
 {
+}
+
+void NotificationConstructor::initialize(JS::Interpreter& interpreter, JS::GlobalObject& global_object)
+{
+    JS::NativeFunction::initialize(interpreter, global_object);
+
     define_property("length", JS::Value(0), JS::Attribute::Configurable);
 }
 
@@ -63,9 +70,15 @@ JS::Value NotificationConstructor::construct(JS::Interpreter& interpreter)
 // END_CONSTRUCTOR
 
 // BEGIN_PROTOTYPE
-NotificationPrototype::NotificationPrototype()
-    : Object(interpreter().global_object().object_prototype())
+NotificationPrototype::NotificationPrototype(JS::GlobalObject& global_object)
+    : JS::Object(global_object.object_prototype())
 {
+}
+
+void NotificationPrototype::initialize(JS::Interpreter& interpreter, JS::GlobalObject& global_object)
+{
+    JS::Object::initialize(interpreter, global_object);
+
     u8 attr = JS::Attribute::Writable | JS::Attribute::Configurable;
     define_native_function("show", show, 0, attr);
 
@@ -75,9 +88,9 @@ NotificationPrototype::NotificationPrototype()
 
 THIS_OBJECT_FROM_INTERPRETER(GUI::Notification, Notification, notification)
 
-JS::Value NotificationPrototype::show(JS::Interpreter& interpreter)
+JS_DEFINE_NATIVE_FUNCTION(NotificationPrototype::show)
 {
-    auto* notification = notification_from(interpreter);
+    auto* notification = notification_from(interpreter, global_object);
     if (!notification)
         return {};
     notification->show();

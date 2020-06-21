@@ -33,7 +33,8 @@ namespace LibGUI {
 // BEGIN_OBJECT
 Window* Window::create(JS::GlobalObject& global_object)
 {
-    return global_object.heap().allocate<Window>(*static_cast<GlobalObject&>(global_object).gui_window_prototype());
+    auto& interpreter = global_object.interpreter();
+    return interpreter.heap().allocate<Window>(global_object, *static_cast<GlobalObject&>(global_object).gui_window_prototype());
 }
 
 Window::Window(JS::Object& prototype)
@@ -45,9 +46,15 @@ Window::Window(JS::Object& prototype)
 // END_OBJECT
 
 // BEGIN_CONSTRUCTOR
-WindowConstructor::WindowConstructor()
-    : JS::NativeFunction(*interpreter().global_object().function_prototype())
+WindowConstructor::WindowConstructor(JS::GlobalObject& global_object)
+    : JS::NativeFunction(*global_object.function_prototype())
 {
+}
+
+void WindowConstructor::initialize(JS::Interpreter& interpreter, JS::GlobalObject& global_object)
+{
+    JS::NativeFunction::initialize(interpreter, global_object);
+
     define_property("length", JS::Value(0), JS::Attribute::Configurable);
 }
 
@@ -63,9 +70,15 @@ JS::Value WindowConstructor::construct(JS::Interpreter& interpreter)
 // END_CONSTRUCTOR
 
 // BEGIN_PROTOTYPE
-WindowPrototype::WindowPrototype()
-    : Object(interpreter().global_object().object_prototype())
+WindowPrototype::WindowPrototype(JS::GlobalObject& global_object)
+    : JS::Object(global_object.object_prototype())
 {
+}
+
+void WindowPrototype::initialize(JS::Interpreter& interpreter, JS::GlobalObject& global_object)
+{
+    JS::Object::initialize(interpreter, global_object);
+
     u8 attr = JS::Attribute::Writable | JS::Attribute::Configurable;
     define_native_function("show", show, 0, attr);
 
@@ -74,9 +87,9 @@ WindowPrototype::WindowPrototype()
 
 THIS_OBJECT_FROM_INTERPRETER(GUI::Window, Window, window)
 
-JS::Value WindowPrototype::show(JS::Interpreter& interpreter)
+JS_DEFINE_NATIVE_FUNCTION(WindowPrototype::show)
 {
-    auto* window = window_from(interpreter);
+    auto* window = window_from(interpreter, global_object);
     if (!window)
         return {};
     window->show();

@@ -33,7 +33,8 @@ namespace LibGUI {
 // BEGIN_OBJECT
 Application* Application::create(JS::GlobalObject& global_object)
 {
-    return global_object.heap().allocate<Application>(*static_cast<GlobalObject&>(global_object).gui_application_prototype());
+    auto& interpreter = global_object.interpreter();
+    return interpreter.heap().allocate<Application>(global_object, *static_cast<GlobalObject&>(global_object).gui_application_prototype());
 }
 
 Application::Application(JS::Object& prototype)
@@ -44,9 +45,15 @@ Application::Application(JS::Object& prototype)
 // END_OBJECT
 
 // BEGIN_CONSTRUCTOR
-ApplicationConstructor::ApplicationConstructor()
-    : JS::NativeFunction(*interpreter().global_object().function_prototype())
+ApplicationConstructor::ApplicationConstructor(JS::GlobalObject& global_object)
+    : JS::NativeFunction(*global_object.function_prototype())
 {
+}
+
+void ApplicationConstructor::initialize(JS::Interpreter& interpreter, JS::GlobalObject& global_object)
+{
+    JS::NativeFunction::initialize(interpreter, global_object);
+
     define_property("length", JS::Value(0), JS::Attribute::Configurable);
 
     u8 attr = JS::Attribute::Writable | JS::Attribute::Configurable;
@@ -63,23 +70,29 @@ JS::Value ApplicationConstructor::construct(JS::Interpreter& interpreter)
     return Application::create(interpreter.global_object());
 }
 
-JS::Value ApplicationConstructor::the(JS::Interpreter& interpreter)
+JS_DEFINE_NATIVE_FUNCTION(ApplicationConstructor::the)
 {
     return Application::create(interpreter.global_object());
 }
 // END_CONSTRUCTOR
 
 // BEGIN_PROTOTYPE
-ApplicationPrototype::ApplicationPrototype()
-    : Object(interpreter().global_object().object_prototype())
+ApplicationPrototype::ApplicationPrototype(JS::GlobalObject& global_object)
+    : JS::Object(global_object.object_prototype())
 {
+}
+
+void ApplicationPrototype::initialize(JS::Interpreter& interpreter, JS::GlobalObject& global_object)
+{
+    JS::Object::initialize(interpreter, global_object);
+
     u8 attr = JS::Attribute::Writable | JS::Attribute::Configurable;
     define_native_function("exec", exec, 0, attr);
 }
 
-static GUI::Application* app_from(JS::Interpreter& interpreter)
+static GUI::Application* app_from(JS::Interpreter& interpreter, JS::GlobalObject& global_object)
 {
-    auto* this_object = interpreter.this_value(interpreter.global_object()).to_object(interpreter);
+    auto* this_object = interpreter.this_value(global_object).to_object(interpreter, global_object);
     if (!this_object)
         return nullptr;
     if (StringView("Application") != this_object->class_name()) {
@@ -89,9 +102,9 @@ static GUI::Application* app_from(JS::Interpreter& interpreter)
     return &GUI::Application::the();
 }
 
-JS::Value ApplicationPrototype::exec(JS::Interpreter& interpreter)
+JS_DEFINE_NATIVE_FUNCTION(ApplicationPrototype::exec)
 {
-    auto* app = app_from(interpreter);
+    auto* app = app_from(interpreter, global_object);
     if (!app)
         return {};
     return JS::Value(app->exec());

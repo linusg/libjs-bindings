@@ -34,25 +34,20 @@
 namespace Bindings {
 namespace LibGUI {
 
+// clang-format off
 OBJECT(Window)
-{
-    __OBJECT(Window)
+    MEMBER(NonnullRefPtr<GUI::Window>, window)
+END
 
-    MEMBER(NonnullRefPtr<GUI::Window>, window);
-};
-
-CONSTRUCTOR(Window) {
-    __CONSTRUCTOR(Window)
-};
+CONSTRUCTOR(Window)
+END
 
 PROTOTYPE(Window)
-{
-    __PROTOTYPE(Window)
-
-    FUNCTION(show);
-    PROPERTY_GETTER(title);
-    PROPERTY_SETTER(title);
-};
+    FUNCTION(show)
+    PROPERTY_GETTER(title)
+    PROPERTY_SETTER(title)
+END
+// clang-format on
 
 }
 }

@@ -34,44 +34,37 @@
 namespace Bindings {
 namespace LibCore {
 
-OBJECT(File)
-{
-    __OBJECT_WITH_ARGS(File, const StringView& filename)
-
-    MEMBER(NonnullRefPtr<Core::File>, file);
-};
+// clang-format off
+OBJECT_WITH_ARGS(File, const StringView& filename)
+    MEMBER(NonnullRefPtr<Core::File>, file)
+END
 
 CONSTRUCTOR(File)
-{
-    __CONSTRUCTOR(File)
-
-    FUNCTION(exists);
-    FUNCTION(is_directory);
-};
+    FUNCTION(exists)
+    FUNCTION(is_directory)
+END
 
 PROTOTYPE(File)
-{
-    __PROTOTYPE(File)
-
-    FUNCTION(is_directory);
-    FUNCTION(open);
-    FUNCTION(close);
-    FUNCTION(read);
-    FUNCTION(read_line);
-    FUNCTION(read_all);
-    FUNCTION(write);
-    FUNCTION(seek);
-    PROPERTY_GETTER(can_read);
-    PROPERTY_GETTER(can_read_line);
-    PROPERTY_GETTER(mode);
-    PROPERTY_GETTER(is_open);
-    PROPERTY_GETTER(eof);
-    PROPERTY_GETTER(has_error);
-    PROPERTY_GETTER(error);
-    PROPERTY_GETTER(error_string);
-    PROPERTY_GETTER(filename);
-    PROPERTY_SETTER(filename);
-};
+    FUNCTION(is_directory)
+    FUNCTION(open)
+    FUNCTION(close)
+    FUNCTION(read)
+    FUNCTION(read_line)
+    FUNCTION(read_all)
+    FUNCTION(write)
+    FUNCTION(seek)
+    PROPERTY_GETTER(can_read)
+    PROPERTY_GETTER(can_read_line)
+    PROPERTY_GETTER(mode)
+    PROPERTY_GETTER(is_open)
+    PROPERTY_GETTER(eof)
+    PROPERTY_GETTER(has_error)
+    PROPERTY_GETTER(error)
+    PROPERTY_GETTER(error_string)
+    PROPERTY_GETTER(filename)
+    PROPERTY_SETTER(filename)
+END
+// clang-format on
 
 }
 }

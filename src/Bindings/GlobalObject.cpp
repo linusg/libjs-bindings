@@ -45,8 +45,8 @@ void GlobalObject::initialize()
     define_property("GUI", gui_object, attr);
 
 #define __JS_BINDINGS_ENUMERATE(Namespace, ObjectName, object_name, ClassName, class_name, PrototypeName, ConstructorName)                                                           \
-    m_##object_name##_##class_name##_prototype = heap().allocate<Namespace::PrototypeName>();                                                                                        \
-    m_##object_name##_##class_name##_constructor = heap().allocate<Namespace::ConstructorName>();                                                                                    \
+    m_##object_name##_##class_name##_prototype = heap().allocate<Namespace::PrototypeName>(*this, *this);                                                                            \
+    m_##object_name##_##class_name##_constructor = heap().allocate<Namespace::ConstructorName>(*this, *this);                                                                        \
     m_##object_name##_##class_name##_constructor->define_property("prototype", m_##object_name##_##class_name##_prototype, 0);                                                       \
     m_##object_name##_##class_name##_constructor->define_property("name", js_string(heap(), #ClassName), JS::Attribute::Configurable);                                               \
     m_##object_name##_##class_name##_prototype->define_property("constructor", m_##object_name##_##class_name##_constructor, JS::Attribute::Writable | JS::Attribute::Configurable); \
@@ -66,18 +66,18 @@ void GlobalObject::visit_children(Visitor& visitor)
 #undef __JS_BINDINGS_ENUMERATE
 }
 
-JS::Value GlobalObject::argc_getter(JS::Interpreter& interpreter)
+JS::Value GlobalObject::argc_getter(JS::Interpreter& interpreter, JS::GlobalObject& global_object)
 {
-    auto& global_object = static_cast<GlobalObject&>(interpreter.global_object());
-    return JS::Value(global_object.argc());
+    auto& our_global_object = static_cast<GlobalObject&>(global_object);
+    return JS::Value(our_global_object.argc());
 }
 
-JS::Value GlobalObject::argv_getter(JS::Interpreter& interpreter)
+JS::Value GlobalObject::argv_getter(JS::Interpreter& interpreter, JS::GlobalObject& global_object)
 {
-    auto& global_object = static_cast<GlobalObject&>(interpreter.global_object());
+    auto& our_global_object = static_cast<GlobalObject&>(global_object);
     auto* argv_array = JS::Array::create(global_object);
-    for (int i = 0; i < global_object.argc(); ++i)
-        argv_array->indexed_properties().append(js_string(interpreter, String(global_object.argv()[i])));
+    for (int i = 0; i < our_global_object.argc(); ++i)
+        argv_array->indexed_properties().append(js_string(interpreter, String(our_global_object.argv()[i])));
     return argv_array;
 }
 

@@ -34,27 +34,22 @@
 namespace Bindings {
 namespace LibGUI {
 
+// clang-format off
 OBJECT(Notification)
-{
-    __OBJECT(Notification)
+    MEMBER(NonnullRefPtr<GUI::Notification>, notification)
+END
 
-    MEMBER(NonnullRefPtr<GUI::Notification>, notification);
-};
-
-CONSTRUCTOR(Notification) {
-    __CONSTRUCTOR(Notification)
-};
+CONSTRUCTOR(Notification)
+END
 
 PROTOTYPE(Notification)
-{
-    __PROTOTYPE(Notification)
-
-    FUNCTION(show);
-    PROPERTY_GETTER(text);
-    PROPERTY_SETTER(text);
-    PROPERTY_GETTER(title);
-    PROPERTY_SETTER(title);
-};
+    FUNCTION(show)
+    PROPERTY_GETTER(text)
+    PROPERTY_SETTER(text)
+    PROPERTY_GETTER(title)
+    PROPERTY_SETTER(title)
+END
+// clang-format on
 
 }
 }
