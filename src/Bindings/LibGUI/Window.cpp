@@ -38,7 +38,7 @@ Window* Window::create(JS::GlobalObject& global_object)
 }
 
 Window::Window(JS::Object& prototype)
-    : Object(&prototype)
+    : Object(prototype)
     , m_window(GUI::Window::construct())
 {
     set_prototype(&prototype);
@@ -60,10 +60,10 @@ void WindowConstructor::initialize(JS::Interpreter& interpreter, JS::GlobalObjec
 
 JS::Value WindowConstructor::call(JS::Interpreter& interpreter)
 {
-    return construct(interpreter);
+    return construct(interpreter, *this);
 }
 
-JS::Value WindowConstructor::construct(JS::Interpreter& interpreter)
+JS::Value WindowConstructor::construct(JS::Interpreter& interpreter, JS::Function&)
 {
     return Window::create(interpreter.global_object());
 }
@@ -71,7 +71,7 @@ JS::Value WindowConstructor::construct(JS::Interpreter& interpreter)
 
 // BEGIN_PROTOTYPE
 WindowPrototype::WindowPrototype(JS::GlobalObject& global_object)
-    : JS::Object(global_object.object_prototype())
+    : JS::Object(*global_object.object_prototype())
 {
 }
 

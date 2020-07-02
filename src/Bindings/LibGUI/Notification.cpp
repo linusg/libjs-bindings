@@ -38,7 +38,7 @@ Notification* Notification::create(JS::GlobalObject& global_object)
 }
 
 Notification::Notification(JS::Object& prototype)
-    : Object(&prototype)
+    : Object(prototype)
     , m_notification(GUI::Notification::construct())
 {
     set_prototype(&prototype);
@@ -60,10 +60,10 @@ void NotificationConstructor::initialize(JS::Interpreter& interpreter, JS::Globa
 
 JS::Value NotificationConstructor::call(JS::Interpreter& interpreter)
 {
-    return construct(interpreter);
+    return construct(interpreter, *this);
 }
 
-JS::Value NotificationConstructor::construct(JS::Interpreter& interpreter)
+JS::Value NotificationConstructor::construct(JS::Interpreter& interpreter, JS::Function&)
 {
     return Notification::create(interpreter.global_object());
 }
@@ -71,7 +71,7 @@ JS::Value NotificationConstructor::construct(JS::Interpreter& interpreter)
 
 // BEGIN_PROTOTYPE
 NotificationPrototype::NotificationPrototype(JS::GlobalObject& global_object)
-    : JS::Object(global_object.object_prototype())
+    : JS::Object(*global_object.object_prototype())
 {
 }
 

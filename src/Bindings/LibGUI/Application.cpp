@@ -38,7 +38,7 @@ Application* Application::create(JS::GlobalObject& global_object)
 }
 
 Application::Application(JS::Object& prototype)
-    : Object(&prototype)
+    : Object(prototype)
 {
     set_prototype(&prototype);
 }
@@ -62,10 +62,10 @@ void ApplicationConstructor::initialize(JS::Interpreter& interpreter, JS::Global
 
 JS::Value ApplicationConstructor::call(JS::Interpreter& interpreter)
 {
-    return construct(interpreter);
+    return construct(interpreter, *this);
 }
 
-JS::Value ApplicationConstructor::construct(JS::Interpreter& interpreter)
+JS::Value ApplicationConstructor::construct(JS::Interpreter& interpreter, JS::Function&)
 {
     return Application::create(interpreter.global_object());
 }
@@ -78,7 +78,7 @@ JS_DEFINE_NATIVE_FUNCTION(ApplicationConstructor::the)
 
 // BEGIN_PROTOTYPE
 ApplicationPrototype::ApplicationPrototype(JS::GlobalObject& global_object)
-    : JS::Object(global_object.object_prototype())
+    : JS::Object(*global_object.object_prototype())
 {
 }
 

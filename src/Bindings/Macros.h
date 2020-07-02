@@ -69,7 +69,7 @@ private:                                \
         virtual ~Name##Constructor() override {};                              \
                                                                                \
         virtual JS::Value call(JS::Interpreter&) override;                     \
-        virtual JS::Value construct(JS::Interpreter&) override;                \
+        virtual JS::Value construct(JS::Interpreter&, JS::Function&) override; \
                                                                                \
     private:                                                                   \
         virtual bool has_constructor() const override { return true; }

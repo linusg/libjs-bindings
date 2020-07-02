@@ -54,7 +54,7 @@ File* File::create(JS::GlobalObject& global_object, const StringView& filename)
 }
 
 File::File(JS::Object& prototype, const StringView& filename)
-    : Object(&prototype)
+    : Object(prototype)
     , m_file(Core::File::construct(filename))
 {
     set_prototype(&prototype);
@@ -94,10 +94,10 @@ void FileConstructor::initialize(JS::Interpreter& interpreter, JS::GlobalObject&
 
 JS::Value FileConstructor::call(JS::Interpreter& interpreter)
 {
-    return construct(interpreter);
+    return construct(interpreter, *this);
 }
 
-JS::Value FileConstructor::construct(JS::Interpreter& interpreter)
+JS::Value FileConstructor::construct(JS::Interpreter& interpreter, JS::Function&)
 {
     auto filename = interpreter.argument(0).to_string(interpreter);
     if (interpreter.exception())
@@ -124,7 +124,7 @@ JS_DEFINE_NATIVE_FUNCTION(FileConstructor::is_directory)
 
 // BEGIN_PROTOTYPE
 FilePrototype::FilePrototype(JS::GlobalObject& global_object)
-    : JS::Object(global_object.object_prototype())
+    : JS::Object(*global_object.object_prototype())
 {
 }
 
