@@ -99,7 +99,7 @@ static GUI::Application* app_from(JS::Interpreter& interpreter, JS::GlobalObject
         interpreter.throw_exception<JS::TypeError>("Not an Application object");
         return nullptr;
     }
-    return &GUI::Application::the();
+    return GUI::Application::the();
 }
 
 JS_DEFINE_NATIVE_FUNCTION(ApplicationPrototype::exec)

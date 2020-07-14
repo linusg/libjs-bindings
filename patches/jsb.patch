@@ -1,5 +1,5 @@
---- src/jsb.cpp	2020-06-21 19:08:16.956498838 +0100
-+++ src/jsb.cpp	2020-06-21 19:08:16.967498796 +0100
+--- src/jsb.cpp	2020-07-14 22:44:03.205000000 +0100
++++ src/jsb.cpp	2020-07-14 22:46:28.408166151 +0100
 @@ -24,11 +24,13 @@
   * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
   */
@@ -23,7 +23,7 @@
  public:
      ReplObject();
      virtual void initialize() override;
-@@ -66,6 +68,9 @@
+@@ -64,6 +66,9 @@
      JS_DECLARE_NATIVE_FUNCTION(save_to_file);
  };
  
@@ -33,7 +33,7 @@
  static bool s_dump_ast = false;
  static bool s_print_last_result = false;
  static RefPtr<Line::Editor> s_editor;
-@@ -373,7 +378,11 @@
+@@ -375,7 +380,11 @@
  
  void ReplObject::initialize()
  {
@@ -46,7 +46,7 @@
      define_property("global", this, JS::Attribute::Enumerable);
      define_native_function("exit", exit_interpreter);
      define_native_function("help", repl_help);
-@@ -547,6 +556,12 @@
+@@ -538,6 +547,13 @@
  
  int main(int argc, char** argv)
  {
@@ -54,12 +54,13 @@
 +    g_argv = argv;
 +
 +    // FIXME: Do this on demand, e.g. "const app = GUI.Application(argc, argv);"
-+    GUI::Application app(argc, argv);
++    auto app = GUI::Application::construct(argc, argv);
++    (void)app;
 +
      bool gc_on_every_allocation = false;
      bool disable_syntax_highlight = false;
-     bool test_mode = false;
-@@ -855,7 +870,7 @@
+     const char* script_path = nullptr;
+@@ -847,7 +863,7 @@
          s_editor->on_tab_complete = move(complete);
          repl(*interpreter);
      } else {
