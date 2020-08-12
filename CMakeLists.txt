@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 3.16)
 project(libjs-bindings)
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wextra -Werror -std=c++2a -fdiagnostics-color=always -fconcepts")
+
 set(SOURCES
     src/jsb.cpp
     src/Bindings/GlobalObject.cpp
