@@ -50,9 +50,9 @@ ApplicationConstructor::ApplicationConstructor(JS::GlobalObject& global_object)
 {
 }
 
-void ApplicationConstructor::initialize(JS::Interpreter& interpreter, JS::GlobalObject& global_object)
+void ApplicationConstructor::initialize(JS::GlobalObject& global_object)
 {
-    JS::NativeFunction::initialize(interpreter, global_object);
+    JS::NativeFunction::initialize(global_object);
 
     define_property("length", JS::Value(0), JS::Attribute::Configurable);
 
@@ -82,9 +82,9 @@ ApplicationPrototype::ApplicationPrototype(JS::GlobalObject& global_object)
 {
 }
 
-void ApplicationPrototype::initialize(JS::Interpreter& interpreter, JS::GlobalObject& global_object)
+void ApplicationPrototype::initialize(JS::GlobalObject& global_object)
 {
-    JS::Object::initialize(interpreter, global_object);
+    JS::Object::initialize(global_object);
 
     u8 attr = JS::Attribute::Writable | JS::Attribute::Configurable;
     define_native_function("exec", exec, 0, attr);

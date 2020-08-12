@@ -51,9 +51,9 @@ NotificationConstructor::NotificationConstructor(JS::GlobalObject& global_object
 {
 }
 
-void NotificationConstructor::initialize(JS::Interpreter& interpreter, JS::GlobalObject& global_object)
+void NotificationConstructor::initialize(JS::GlobalObject& global_object)
 {
-    JS::NativeFunction::initialize(interpreter, global_object);
+    JS::NativeFunction::initialize(global_object);
 
     define_property("length", JS::Value(0), JS::Attribute::Configurable);
 }
@@ -75,9 +75,9 @@ NotificationPrototype::NotificationPrototype(JS::GlobalObject& global_object)
 {
 }
 
-void NotificationPrototype::initialize(JS::Interpreter& interpreter, JS::GlobalObject& global_object)
+void NotificationPrototype::initialize(JS::GlobalObject& global_object)
 {
-    JS::Object::initialize(interpreter, global_object);
+    JS::Object::initialize(global_object);
 
     u8 attr = JS::Attribute::Writable | JS::Attribute::Configurable;
     define_native_function("show", show, 0, attr);

@@ -67,9 +67,9 @@ FileConstructor::FileConstructor(JS::GlobalObject& global_object)
 {
 }
 
-void FileConstructor::initialize(JS::Interpreter& interpreter, JS::GlobalObject& global_object)
+void FileConstructor::initialize(JS::GlobalObject& global_object)
 {
-    JS::NativeFunction::initialize(interpreter, global_object);
+    JS::NativeFunction::initialize(global_object);
 
     define_property("length", JS::Value(1), JS::Attribute::Configurable);
 
@@ -128,9 +128,9 @@ FilePrototype::FilePrototype(JS::GlobalObject& global_object)
 {
 }
 
-void FilePrototype::initialize(JS::Interpreter& interpreter, JS::GlobalObject& global_object)
+void FilePrototype::initialize(JS::GlobalObject& global_object)
 {
-    JS::Object::initialize(interpreter, global_object);
+    JS::Object::initialize(global_object);
 
     u8 attr = JS::Attribute::Writable | JS::Attribute::Configurable;
     define_native_function("isDirectory", is_directory, 0, attr);

@@ -65,7 +65,7 @@ private:                                \
                                                                                \
     public:                                                                    \
         Name##Constructor(JS::GlobalObject&);                                  \
-        virtual void initialize(JS::Interpreter&, JS::GlobalObject&) override; \
+        virtual void initialize(JS::GlobalObject&) override;                   \
         virtual ~Name##Constructor() override {};                              \
                                                                                \
         virtual JS::Value call(JS::Interpreter&) override;                     \
@@ -74,15 +74,15 @@ private:                                \
     private:                                                                   \
         virtual bool has_constructor() const override { return true; }
 
-#define PROTOTYPE(Name)                                                        \
-    class Name##Prototype final : public JS::Object {                          \
-        JS_OBJECT(Name##Prototype, JS::Object);                                \
-                                                                               \
-    public:                                                                    \
-        Name##Prototype(JS::GlobalObject&);                                    \
-        virtual void initialize(JS::Interpreter&, JS::GlobalObject&) override; \
-        virtual ~Name##Prototype() override {};                                \
-                                                                               \
+#define PROTOTYPE(Name)                                      \
+    class Name##Prototype final : public JS::Object {        \
+        JS_OBJECT(Name##Prototype, JS::Object);              \
+                                                             \
+    public:                                                  \
+        Name##Prototype(JS::GlobalObject&);                  \
+        virtual void initialize(JS::GlobalObject&) override; \
+        virtual ~Name##Prototype() override {};              \
+                                                             \
     private:
 
 #define SIMPLE_GETTER(Prototype, object, name)                                                        \
